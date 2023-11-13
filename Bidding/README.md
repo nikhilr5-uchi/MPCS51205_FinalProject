@@ -13,7 +13,6 @@ feature.
 
 ## Status
 * Accepted
-easier to use.
 
 ### Confirmation
 Compliance of this ADR will be ensured through mutual accountability and
