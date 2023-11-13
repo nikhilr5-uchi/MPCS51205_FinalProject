@@ -1,6 +1,6 @@
-#ADR for Items microservice
+# ADR for Items microservice
 
-#Decisions
+## Decisions
 
 1. Planning to have an item microservice that tracks everything about an item
 
