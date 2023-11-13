@@ -10,10 +10,14 @@ Shi, Nikhil Richard, Alan Salkanovic, John Hadidian-Baugher, Mark Shacklette}
 # ADR: Auction Site Implementation
 
 ## Context
-
+* The Auction Site Implementation ADR outlines the key decisions made regarding the technology stack for developing the Auction Site modeled on eBay.
 
 ## Decision Drivers
-
+* The programming language should be easily readable among team members to facilitate collaboration and understanding of the codebase.
+* The chosen backend technology should seamlessly connect with frontend services and support Web API calls.
+* The data format chosen should be intuitive, compatible with the programming language, and facilitate efficient data processing.
+* The selected data storage solution should be easy to set up in the chosen programming environment and meet the project's requirements.
+* The overall technology stack should offer ease of implementation, balancing simplicity with functionality to meet project goals.
 
 ## Considered Options
 * Flask for backend API functionality
@@ -39,6 +43,6 @@ Shi, Nikhil Richard, Alan Salkanovic, John Hadidian-Baugher, Mark Shacklette}
 * The data store is a bit more convoluted in decision. We now are locked into unordered data storage as opposed to a relational database, which could make the data more cluttered and convoluted.
 * Overall, we found that the ease of implementing MongoDB in Python made it easier to use.
 
-### Confirmation
+## Confirmation
 Compliance of this ADR will be ensured through mutual accountability and
 continued communication as a team.
