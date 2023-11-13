@@ -32,7 +32,7 @@ Shi, Nikhil Richard, Alan Salkanovic, John Hadidian-Baugher, Mark Shacklette}
 ## Status
 * Accepted
 
-### Consequences
+## Consequences
 * Python makes it so that our programming is easily readable among different group members. We all understand the language and it is very readable.
 * Flask is the best option for creating backend services that connect to frontend and Web API calls.
 * JSON is also a good outcome here because it is the most intuitive of the data formats as well. It works really well with Python.
