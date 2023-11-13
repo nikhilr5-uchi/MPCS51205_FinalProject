@@ -15,5 +15,4 @@ feature.
 * Accepted
 
 ### Confirmation
-Compliance of this ADR will be ensured through mutual accountability and
-continued communication as a team.
+Compliance of this ADR will be ensured through mutual accountability and continued communication as a team.
