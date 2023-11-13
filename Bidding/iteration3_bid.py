@@ -38,7 +38,7 @@ def create_bid():
 
     result = bid_collection.insert_one(data)
 
-    return jsonify({'message': 'Bid created successfully', 'booking_id': str(result.inserted_id)}), 201
+    return jsonify({'message': 'Bid created successfully', 'bidding_id': str(result.inserted_id)}), 201
 
 
 if __name__ == '__main__':
