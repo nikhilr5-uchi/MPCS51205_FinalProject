@@ -31,12 +31,14 @@ feature.
 * MySQL for data storage
 * Python as the programming language
 * JSON as the data format
+* HTML, CSS, and JavaScript for frontend integration
 
 ## Decision Outcome
 * We chose Python using Flask (since they go hand in hand).
 * We chose JSON as the data format.
 * We chose MongoDB over MySQL, since it was more intuitive to
 * set up in the Python environment.
+* We chose HTML, CSS, and Javascript for frontend development as they provide a good solid foundation.
 
 ## Status
 * Accepted
