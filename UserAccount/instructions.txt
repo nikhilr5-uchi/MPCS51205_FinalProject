@@ -1,0 +1,4 @@
+1.) cd into root of this repo
+2.) run 
+      export FLASK_APP=UserAccount
+      flask run
