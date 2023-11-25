@@ -2,3 +2,8 @@
 2.) run 
       export FLASK_APP=UserAccount
       flask run
+
+
+Resources leveraged:
+https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
+https://www.youtube.com/watch?v=mISFEwojJmE&t=0s&ab_channel=LukePeters
