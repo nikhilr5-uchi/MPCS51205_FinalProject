@@ -14,6 +14,10 @@ api = Api(app)
 
 auction_items = []
 
+'''
+task runs in the background on a different threads and consumes from the queue
+refresh main page to see results from consumption
+'''
 def start_consumer_queue(): #consume tasks
     connection = pika.BlockingConnection(
         pika.ConnectionParameters(host='localhost'))

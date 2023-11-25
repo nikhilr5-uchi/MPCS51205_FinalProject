@@ -46,3 +46,18 @@ Shi, Nikhil Richard, Alan Salkanovic, John Hadidian-Baugher, Mark Shacklette}
 ## Confirmation
 Compliance of this ADR will be ensured through mutual accountability and
 continued communication as a team.
+
+
+### Start up
+
+#### Start up rabbitmq server
+` docker run -d --hostname my-wabbit --name MyWabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management `
+
+#### Run home page
+` python auctionwindow.py `
+
+#### Test Sending Item
+` python item.py `
+Make sure dependenices installed
+
+#### Refresh page
