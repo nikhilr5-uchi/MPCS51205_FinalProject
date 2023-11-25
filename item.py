@@ -4,13 +4,14 @@ from pika.exchange_type import ExchangeType
 import json
 
 class Item:
-    def __init__(self, user, title, expiration, starting_bid, location, description):
+    def __init__(self, user, title, expiration, starting_bid, location, description, uid):
         self.user = user
         self.title = title
         self.expiration = expiration
         self.starting_bid = starting_bid
         self.location = location
         self.descriptions = description
+        self.uid = uid
 
     # if price is high enough to add
     def IsOfferAllowed(self, priceOffer):

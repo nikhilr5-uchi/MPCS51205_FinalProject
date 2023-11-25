@@ -8,11 +8,16 @@ import pika
 import asyncio
 import threading
 import json
+from pymongo import MongoClient
 
 app = Flask(__name__)
 api = Api(app)
+client = MongoClient("mongodb://localhost:27017/")
+db = client['items_db']
+bid_collection = db['item']
 
-auction_items = []
+auction_items = {}
+uid_counter = 1
 
 '''
 task runs in the background on a different threads and consumes from the queue
@@ -43,7 +48,7 @@ def start_consumer_queue(): #consume tasks
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', auction_items=auction_items)
+    return render_template('index.html', auction_items=auction_items.values())
 
 @app.route('/addListing', methods=('GET', 'POST'))
 def create():
@@ -58,15 +63,22 @@ def create():
         elif not description:
             flash('Description is required!')
         else:
-            new_item = Item(title, title, expirationDate, startingBid, location, description)   
+            global uid_counter
+            new_item = Item(user="placeholder", title=title, expiration=expirationDate, starting_bid=startingBid, 
+                location=location, description=description, uid=uid_counter)   
             new_item.PublishItem()
+            uid_counter+=1
             return redirect(url_for('index'))
 
     return render_template('addListing.html')
 
 def add_to_auction(body):
     item_dict = json.loads(body)
-    auction_items.append(item_dict)
+    auction_items[item_dict['uid']] = item_dict
+    data = item_dict
+
+    ##insert into mongo db
+    result = bid_collection.insert_one(data)
 
 if __name__ == '__main__':
     thread = threading.Thread(target=start_consumer_queue)
