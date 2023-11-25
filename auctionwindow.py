@@ -1,7 +1,7 @@
 
 import sys
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from flask_restful import Api, Resource
 from item import Item
 import pika
@@ -34,7 +34,7 @@ def start_consumer_queue(): #consume tasks
 
     def callback(ch, method, properties, body):
         print(f" [x] {body}")
-        auction_items.append(json.loads(body))
+        add_to_auction(json.loads(body))
 
     channel.basic_consume(
         queue=queue_name, on_message_callback=callback, auto_ack=True)
@@ -45,14 +45,28 @@ def start_consumer_queue(): #consume tasks
 def index():
     return render_template('index.html', auction_items=auction_items)
 
-# @app.route('/addListing', methods=['GET','POST'])
-# def addListing():
-#     if request.method == "POST":
-#         print(request.form["name"])
-#         print(request.form["email"])
-#         return
+@app.route('/addListing', methods=('GET', 'POST'))
+def create():
+    if request.method == 'POST':
+        title = request.form['title']
+        location = request.form['location']
+        expirationDate = request.form['expirationDate']
+        description = request.form['description']
+        startingBid = request.form['startingBid']
+        if not title:
+            flash('Title is required!')
+        elif not description:
+            flash('Description is required!')
+        else:
+            new_item = Item(title, title, expirationDate, startingBid, location, description)   
+            new_item.PublishItem()
+            return redirect(url_for('index'))
 
-#     return render_template("index.html")
+    return render_template('addListing.html')
+
+def add_to_auction(body):
+    item_dict = json.loads(body)
+    auction_items.append(item_dict)
 
 if __name__ == '__main__':
     thread = threading.Thread(target=start_consumer_queue)
