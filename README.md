@@ -48,7 +48,7 @@ Compliance of this ADR will be ensured through mutual accountability and
 continued communication as a team.
 
 
-### Start up
+## Start up
 
 #### Start up rabbitmq server
 ` docker run -d --hostname my-wabbit --name MyWabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management `
