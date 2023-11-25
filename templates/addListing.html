@@ -1,14 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-        <h1>
-                This is home.html
-            </h1>
-            <form method="post">
-              Name: <input name="name"/>
-              <br/><br/>
-              Email: <input name="email"/>
-              <br/><br/>
-              <button type="submit">Submit</button>
-            </form>
+  <h1>{% block title %} Add a New Listing {% endblock %}</h1>
+  <form method="post">
+      <label for="title">Title: </label>
+      <input type="text" name="title"
+             placeholder="Title"
+             value="{{ request.form['title'] }}"></input>
+      <br>
+      <label for="title">Location: </label>
+      <input type="text" name="location"
+             placeholder="Location"
+             value="{{ request.form['location'] }}"></input>
+      <br>
+      <label for="birthday">Expiration Date:</label>
+      <input type="date" id="expirationDate" name="expirationDate" 
+              value="{{request.form['expirationDate']}}">
+      <br>
+      <label for="birthday">Starting bid:</label>
+      <input type="text" id="startingBid" name="startingBid" 
+              value="{{request.form['startingBid']}}">
+      <br>
+      <label for="content">Description</label>
+      <br>
+      <textarea name="description"
+                placeholder="Description"
+                rows="15"
+                cols="60"
+                >{{ request.form['description'] }}</textarea>
+      <br>
+      <button type="submit">Submit</button>
+  </form>
 </body>
 </html> 
