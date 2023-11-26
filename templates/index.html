@@ -1,16 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>FlaskBlog</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UChicago Auction Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
 </head>
+
 <body>
-   <h1>Auction Website</h1>
-   <p align="center"><a href=addListing >
-       <button class=grey style="height:75px;width:150px">Add Listing</button>
-    </a></p>
-   {% for auction_item in auction_items %}
-   <p>{{ auction_item }} </p>
-{% endfor %}
+    <section class="hero is-fullheight">
+
+        <div class="hero-head">
+            <nav class="navbar">
+                <div class="container">
+                    <div id="navbarMenuHeroA" class="navbar-menu">
+                        <div class="navbar-end">
+                            <a href="{{ url_for('main.index') }}" class="navbar-item">
+                                Home
+                            </a>
+                            <div class="navbar-item">
+                                <form action="{{ url_for('main.search') }}" method="GET">
+                                    <div class="field is-grouped">
+                                        <p class="control is-expanded">
+                                            <input class="input" type="text" placeholder="Search" name="query">
+                                        </p>
+                                        <p class="control">
+                                            <button class="button is-info" type="submit">Search</button>
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+                            <a href="{{ url_for('main.all_listings') }}" class="navbar-item">
+                                All Listings
+                            </a>
+                            <a href="{{ url_for('main.add_listing') }}" class="navbar-item">
+                                Add Listing
+                            </a>
+                            <a href="{{ url_for('main.shopping_cart') }}" class="navbar-item">
+                                Shopping Cart
+                            </a>
+                            <a href="{{ url_for('main.profile') }}" class="navbar-item">
+                                Profile
+                            </a>
+                            <a href="{{ url_for('auth.logout') }}" class="navbar-item">
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+    </section>
 </body>
+
 </html>
