@@ -4,7 +4,7 @@
 <div class="column is-4 is-offset-4">
     <h3 class="title">Login</h3>
     <div class="box">
-        <form method="POST" action="/login">
+        <form method="POST" action="{{ url_for('auth.process_login') }}">
             <div class="field">
                 <div class="control">
                     <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
@@ -22,7 +22,7 @@
                     Remember me
                 </label>
             </div>
-            <button class="button is-block is-info is-large is-fullwidth">Login</button>
+            <button class="button is-block is-info is-large is-fullwidth" type="submit">Login</button>
         </form>
     </div>
 </div>

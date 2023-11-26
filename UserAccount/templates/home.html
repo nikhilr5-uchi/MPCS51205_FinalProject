@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -17,19 +17,17 @@
                 <div class="container">
                     <div id="navbarMenuHeroA" class="navbar-menu">
                         <div class="navbar-end">
-                            <a href="{{ url_for('main.index') }}" class="navbar-item">
+                            <a href="{{ url_for('main.home') }}" class="navbar-item">
                                 Home
                             </a>
                             <div class="navbar-item">
-                                <form action="{{ url_for('main.search') }}" method="GET">
-                                    <div class="field is-grouped">
-                                        <p class="control is-expanded">
-                                            <input class="input" type="text" placeholder="Search" name="query">
-                                        </p>
-                                        <p class="control">
-                                            <button class="button is-info" type="submit">Search</button>
-                                        </p>
-                                    </div>
+                                <form action="{{ url_for('main.search') }}" method="GET" class="field is-grouped">
+                                    <p class="control is-expanded">
+                                        <input class="input" type="text" placeholder="Search" name="query">
+                                    </p>
+                                    <p class="control">
+                                        <button class="button is-info" type="submit">Search</button>
+                                    </p>
                                 </form>
                             </div>
                             <a href="{{ url_for('main.all_listings') }}" class="navbar-item">
@@ -55,8 +53,7 @@
 
         <div class="hero-body">
             <div class="container has-text-centered">
-                {% block content %}
-                {% endblock %}
+                {% block content %}{% endblock %}
             </div>
         </div>
     </section>
