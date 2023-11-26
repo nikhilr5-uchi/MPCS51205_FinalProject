@@ -1,7 +1,29 @@
 {% extends "home.html" %}
 
 {% block content %}
-<h1 class="title">
-  Welcome, Crerar Creators!
-</h1>
+    <div class="column is-4 is-offset-4">
+        <h3 class="title">User Profile</h3>
+        <p>Email: {{ user.email }}</p>
+        <p>Name: {{ user.name }}</p>
+
+        {% if new_address %}
+            <p>New Address: {{ new_address }}</p>
+        {% else %}
+            <p>Address: {{ user.address }}</p>
+        {% endif %}
+
+        <br>
+
+        <a href="{{ url_for('main.edit_address') }}" class="button is-primary">Edit Address</a>
+    </div>
+
+    <h3 class="title is-4">Past Orders</h3>
+
+    <ul>
+        {% for order in user.orders %}
+            <li>
+                <a href="{{ url_for('main.order_details', order_id=order.id) }}">{{ order.product_name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
