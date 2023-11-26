@@ -1,7 +1,9 @@
 from flask import Flask
-# from flask_mongoengine import MongoEngine
+from flask_mongoengine import MongoEngine
+from flask_login import LoginManager
 
-# db = MongoEngine()
+
+db = MongoEngine()
 
 def create_app():
     app = Flask(__name__)
@@ -13,7 +15,17 @@ def create_app():
     #     'host': 'mongodb://username:password@localhost/db_name'
     # }
 
-    # db.init_app(app)
+    db.init_app(app)
+    
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app)
+
+    from .models import User
+
+    @login_manager.user_loader
+    def load_user(email):
+        return User.objects(email=email).first()
 
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint

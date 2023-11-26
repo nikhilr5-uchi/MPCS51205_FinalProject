@@ -1,14 +1,8 @@
 from flask import Blueprint, render_template
-# from . import db
-import pymongo
+from . import db
+from flask_login import login_required, current_user
 
 main = Blueprint('main', __name__)
-
-# Database
-
-# client = pymongo.MongoClient('localhost', 27017)
-
-# db = client.user_login_system
 
 @main.route('/')
 def index():
@@ -16,4 +10,4 @@ def index():
 
 @main.route('/profile')
 def profile():
-    return render_template('profile.html')
+    return render_template('profile.html', name=current_user.name)
