@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 from . import db
 from .models import User
 
@@ -16,13 +16,14 @@ def login_post():
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
 
-    user = User.query.filter_by(email=email).first()
+    user = User.objects(email=email).first()
 
-    if not user or not password:
+    if not user or user.password != password:
         flash('Please check your login details and try again.')
         return redirect(url_for('auth.login')) 
 
     login_user(user, remember=remember)
+    print(f"Is Authenticated: {current_user.is_authenticated}")
     return redirect(url_for('main.profile'))
 
 
@@ -41,10 +42,10 @@ def signup_post():
         flash('Must sign up with @uchicago.edu email')
         return redirect(url_for('auth.signup'))
 
-    user = User.query.filter_by(email=email).first()
+    user = User.objects(email=email).first()
 
     if user: 
-        flash('Email address already exists')
+        flash('Email address already exists. Go to login page')
         return redirect(url_for('auth.signup'))
 
     new_user = User(email=email, name=name, password=password)
