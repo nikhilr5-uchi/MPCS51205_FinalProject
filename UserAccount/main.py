@@ -4,12 +4,6 @@ import pymongo
 
 main = Blueprint('main', __name__) 
 
-# Database
-
-# client = pymongo.MongoClient('localhost', 27017)
-
-# db = client.user_login_system
-
 # Sample user data
 sample_user = {
     'email': 'sample@example.com',
@@ -167,7 +161,6 @@ def checkout(listing_id):
         # Handle listing not found
         return redirect(url_for('main.shopping_cart'))
 
-
 @main.route('/process_checkout/<int:listing_id>', methods=['POST'])
 def process_checkout(listing_id):
     # Fetch listing details based on listing_id
@@ -179,7 +172,6 @@ def process_checkout(listing_id):
         address = request.form.get('address')
 
         # Perform the necessary actions (e.g., payment processing) and update the order status
-        # In this example, we'll just mark the listing as sold
         listing['buy_now_enabled'] = False  # Disable buy now after purchase
 
         return render_template('checkout_success.html', listing=listing, full_name=full_name, address=address)

@@ -13,7 +13,6 @@
         {% endwith %}
 
         <form method="POST" action="{{ url_for('main.save_address') }}">
-            <!-- Assuming you have a 'user' variable available -->
             <div class="field">
                 <label class="label">Current Address:</label>
                 <p class="control">
@@ -24,7 +23,6 @@
             <!-- Include a hidden input field to capture the current address -->
             <input type="hidden" name="current_address" value="{{ user.address }}">
 
-            <!-- Additional fields for the new address -->
             <div class="field">
                 <label class="label">New Address:</label>
                 <p class="control">
