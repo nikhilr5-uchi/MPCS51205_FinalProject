@@ -19,4 +19,4 @@ def process_login():
     # Process login logic here
 
     # Redirect to the main.index route after successful login
-    return redirect(url_for('main.home'))
+    return redirect(url_for('main.all_listings'))
