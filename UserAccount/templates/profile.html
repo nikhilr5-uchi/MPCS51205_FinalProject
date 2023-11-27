@@ -17,6 +17,15 @@
         <a href="{{ url_for('main.edit_address') }}" class="button is-primary">Edit Address</a>
     </div>
 
+    <h3 class="title is-4">My Listings</h3>
+    <ul>
+        {% for listing in user.listings %}
+            <li>
+                <a href="{{ url_for('main.product_details', listing_id=listing.id) }}">{{ listing.product_title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
     <h3 class="title is-4">Past Orders</h3>
 
     <ul>

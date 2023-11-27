@@ -18,6 +18,18 @@ sample_user = {
     'orders': [
         {'id': 1, 'product_name': 'Product 1'},
         {'id': 2, 'product_name': 'Product 2'},
+    ],
+    'listings': [
+        {
+            'id': 1,
+            'product_title': 'Desk Lamp',
+            'image': 'lamp.jpg',
+            'min_bid': 5.0,
+            'expiration_date': '2023-12-31',
+            'location': 'Hyde Park',
+            'description': 'Desk Lamp used for 5 months.',
+        },
+        # Add more listings as needed
     ]
 }
 
@@ -36,7 +48,7 @@ def search():
 
 @main.route('/all_listings')
 def all_listings():
-    return render_template('all_listings.html')
+    return render_template('all_listings.html', user=sample_user)
 
 @main.route('/add_listing')
 def add_listing():
@@ -71,4 +83,49 @@ def order_details(order_id):
     # For simplicity, using a sample order dictionary
     order = {'id': order_id, 'product_name': f'Product {order_id}'}
     return render_template('order_details.html', order=order)
+
+@main.route('/product_details/<int:listing_id>')
+def product_details(listing_id):
+    listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
+    if listing:
+        return render_template('product_details.html', listing=listing)
+    else:
+        # Handle listing not found
+        return redirect(url_for('main.my_listings'))
+
+@main.route('/my_listings')
+def my_listings():
+    return render_template('my_listings.html', user=sample_user)
+
+@main.route('/place_bid/<int:listing_id>', methods=['POST'])
+def place_bid(listing_id):
+    # Fetch the listing from the user's data
+    listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
+
+    if listing:
+        # Get the current bid amount from the form
+        bid_amount = float(request.form.get('bid_amount', 0.0))
+
+        # Ensure the bid amount is greater than the current bid
+        if bid_amount > listing['min_bid']:
+            # Update the minimum bid for the listing
+            listing['min_bid'] = bid_amount
+            bid_message = 'Bid placed successfully!'
+            bid_status = 'success'
+        else:
+            bid_message = 'Bid must be greater than the current minimum bid.'
+            bid_status = 'danger'
+    else:
+        bid_message = 'Listing not found.'
+        bid_status = 'danger'
+
+    # Pass bid-related messages to the template
+    return render_template('product_details.html', listing=listing, bid_message=bid_message, bid_status=bid_status)
+
+
+
+@main.route('/delete_listing/<int:listing_id>', methods=['POST'])
+def delete_listing(listing_id):
+    # Handle listing deletion logic here
+    pass
 
