@@ -35,9 +35,16 @@
 
             <div class="field">
                 <label class="checkbox">
-                    <input type="checkbox" name="buy_now">
+                    <input type="checkbox" name="buy_now" id="buy_now_checkbox">
                     Buy Now
                 </label>
+            </div>
+
+            <div class="field" id="buy_now_price_field" style="display: none;">
+                <label class="label">Buy Now Price</label>
+                <div class="control">
+                    <input class="input" type="number" name="buy_now_price" placeholder="Buy Now Price">
+                </div>
             </div>
 
             <div class="field">
@@ -69,4 +76,14 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Show/hide Buy Now Price field based on the Buy Now checkbox
+    const buyNowCheckbox = document.getElementById('buy_now_checkbox');
+    const buyNowPriceField = document.getElementById('buy_now_price_field');
+
+    buyNowCheckbox.addEventListener('change', function () {
+        buyNowPriceField.style.display = buyNowCheckbox.checked ? 'block' : 'none';
+    });
+</script>
 {% endblock %}

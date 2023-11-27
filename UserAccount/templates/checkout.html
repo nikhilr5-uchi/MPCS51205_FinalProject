@@ -4,12 +4,12 @@
     <div class="column is-8 is-offset-2">
         <h3 class="title">Checkout</h3>
         <div class="box">
-            <p>Product: {{ order.product_name }}</p>
-            <p>Price: ${{ order.price }}</p>
+            <p>Product: {{ listing.product_title }}</p>
+            <p>Buy Now Price: ${{ listing.buy_now_price }}</p>
             <hr>
 
             <!-- Add a form for user information and payment -->
-            <form method="POST" action="{{ url_for('main.process_checkout', order_id=order.id) }}">
+            <form method="POST" action="{{ url_for('main.process_checkout', listing_id=listing.id) }}">
                 <!-- Add form fields for user information, e.g., name, address, payment details, etc. -->
                 <div class="field">
                     <label class="label">Full Name</label>

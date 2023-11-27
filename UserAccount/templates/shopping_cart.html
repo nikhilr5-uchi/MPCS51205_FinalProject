@@ -3,25 +3,24 @@
 {% block content %}
     <div class="column is-8 is-offset-2">
         <h3 class="title">Shopping Cart</h3>
+
         <ul>
-            {% for order in user.orders %}
-                <li>
-                    <div class="columns">
-                        <div class="column is-6">
-                            <p>{{ order.product_name }}</p>
+            {% for listing in user.listings %}
+                {% if listing.buy_now_enabled%}
+                    <li>
+                        <div class="columns">
+                            <div class="column is-6">
+                                <p>{{ listing.product_title }}</p>
+                            </div>
+                            <div class="column is-3">
+                                <p>Buy Now Price: ${{ listing.buy_now_price }}</p>
+                            </div>
+                            <div class="column is-3">
+                                <a href="{{ url_for('main.checkout', listing_id=listing.id) }}" class="button is-primary">Buy Now</a>
+                            </div>
                         </div>
-                        <div class="column is-3">
-                            <p>Price: ${{ order.price }}</p>
-                        </div>
-                        <div class="column is-3">
-                            {% if order.buy_now_enabled or order.bid_won %}
-                                <a href="{{ url_for('main.checkout', order_id=order.id) }}" class="button is-primary">Buy Now</a>
-                            {% else %}
-                                <p>Not Available for Purchase</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </li>
+                    </li>
+                {% endif %}
             {% endfor %}
         </ul>
     </div>

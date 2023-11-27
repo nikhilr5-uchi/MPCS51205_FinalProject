@@ -22,7 +22,8 @@ sample_user = {
             'image': 'math_textbook.jpg', 
             'price': 12.0,
             'buy_now_enabled': True, 
-            'bid_won': False
+            'bid_won': False,
+            'buy_now_price': 15.0
         },
         {
             'id': 2,
@@ -44,6 +45,7 @@ sample_user = {
             'location': 'Hyde Park',
             'description': 'Desk Lamp used for 5 months.',
             'buy_now_enabled': True,
+            'buy_now_price': 15.0,
         },
         {
             'id': 2,
@@ -154,30 +156,34 @@ def delete_listing(listing_id):
     # Handle listing deletion logic here
     pass
 
-@main.route('/checkout/<int:order_id>')
-def checkout(order_id):
-    # Fetch order details based on order_id
-    order = next((order for order in sample_user['orders'] if order['id'] == order_id), None)
-    if order:
-        return render_template('checkout.html', order=order)
+@main.route('/checkout/<int:listing_id>')
+def checkout(listing_id):
+    # Fetch listing details based on listing_id
+    listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
+
+    if listing:
+        return render_template('checkout.html', listing=listing)
     else:
-        # Handle order not found
+        # Handle listing not found
         return redirect(url_for('main.shopping_cart'))
 
-@main.route('/process_checkout/<int:order_id>', methods=['POST'])
-def process_checkout(order_id):
-    # Fetch order details based on order_id
-    order = next((order for order in sample_user['orders'] if order['id'] == order_id), None)
 
-    if order:
+@main.route('/process_checkout/<int:listing_id>', methods=['POST'])
+def process_checkout(listing_id):
+    # Fetch listing details based on listing_id
+    listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
+
+    if listing:
         # Process the checkout and handle the submitted form data
         full_name = request.form.get('full_name')
         address = request.form.get('address')
 
         # Perform the necessary actions (e.g., payment processing) and update the order status
+        # In this example, we'll just mark the listing as sold
+        listing['buy_now_enabled'] = False  # Disable buy now after purchase
 
-        return render_template('checkout_success.html', order=order, full_name=full_name, address=address)
+        return render_template('checkout_success.html', listing=listing, full_name=full_name, address=address)
     else:
-        # Handle order not found
+        # Handle listing not found
         return redirect(url_for('main.shopping_cart'))
 

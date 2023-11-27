@@ -35,6 +35,26 @@
                     <p><strong>Expiration Date:</strong> {{ listing.expiration_date }}</p>
                     <p><strong>Location:</strong> {{ listing.location }}</p>
                     <p><strong>Description:</strong> {{ listing.description }}</p>
+
+                    {% if listing.buy_now_enabled %}
+                        <p><strong>Buy Now Price:</strong> ${{ listing.buy_now_price }}</p>
+                        <form method="POST" action="{{ url_for('main.product_details', listing_id=listing.id) }}">
+                            <input type="hidden" name="action" value="buy_now">
+                            <button type="submit" class="button is-success">Buy Now</button>
+                        </form>
+                    {% endif %}
+
+                    <!-- "Add to Shopping Cart" button -->
+                    <form method="POST" action="{{ url_for('main.product_details', listing_id=listing.id) }}">
+                        <input type="hidden" name="action" value="add_to_cart">
+                        <button type="submit" class="button is-info">Add to Shopping Cart</button>
+                    </form>
+
+                    {% if message %}
+                        <div class="notification is-success">
+                            {{ message }}
+                        </div>
+                    {% endif %}
                     
                     <!-- Delete Listing Button -->
                     <a href="{{ url_for('main.delete_listing', listing_id=listing.id) }}" class="button is-danger">Delete Listing</a>
