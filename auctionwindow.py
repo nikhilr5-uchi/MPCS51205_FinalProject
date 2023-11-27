@@ -1,7 +1,7 @@
 
 import sys
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_restful import Api, Resource
 from item import Item
 import pika
@@ -46,8 +46,19 @@ def start_consumer_queue(): #consume tasks
 
     channel.start_consuming()
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    if request.method == 'POST':
+        new_ordering = []
+        sortType = request.form['sort']
+        old_ordering = list(auction_items.values())
+        print("old_ordering: ", old_ordering)
+        if sortType == 'priceLowHigh':
+            new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=False)
+        if sortType == 'priceHighLow':
+            new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=True)
+        return render_template('index.html', auction_items=new_ordering)
+
     return render_template('index.html', auction_items=auction_items.values())
 
 @app.route('/addListing', methods=('GET', 'POST'))
@@ -72,6 +83,22 @@ def create():
 
     return render_template('addListing.html')
 
+
+@app.route('/removeListing', methods=('GET', 'POST'))
+def remove():
+    if request.method == 'POST':
+        removeUID = request.form['removeUID']
+        if not removeUID:
+            flash('UID that is going to be removed is required!')
+        else:
+            print("Remove Listing with UID, ", removeUID)
+            del auction_items[int(removeUID)]
+            return redirect(url_for('index'))
+
+    if (len(auction_items.keys()) == 0):
+        flash('No items to be removed!')
+    return render_template('removeListing.html', auction_uids = auction_items.keys())
+
 def add_to_auction(body):
     item_dict = json.loads(body)
     auction_items[item_dict['uid']] = item_dict
@@ -79,6 +106,8 @@ def add_to_auction(body):
 
     ##insert into mongo db
     result = bid_collection.insert_one(data)
+
+
 
 if __name__ == '__main__':
     thread = threading.Thread(target=start_consumer_queue)
