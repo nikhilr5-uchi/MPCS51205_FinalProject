@@ -16,8 +16,23 @@ sample_user = {
     'name': 'John Doe',
     'address': '123 Main St, Cityville',
     'orders': [
-        {'id': 1, 'product_name': 'Product 1'},
-        {'id': 2, 'product_name': 'Product 2'},
+        {
+            'id': 1,
+            'product_name': 'College Math',
+            'image': 'math_textbook.jpg', 
+            'price': 12.0,
+            'buy_now_enabled': True, 
+            'bid_won': False
+        },
+        {
+            'id': 2,
+            'product_name': 'College Dictionary of Psychology',
+            'image': 'psychology.jpeg', 
+            'price': 15.0,
+            'buy_now_enabled': False, 
+            'bid_won': True
+        },
+        # Add more orders as needed
     ],
     'listings': [
         {
@@ -28,10 +43,22 @@ sample_user = {
             'expiration_date': '2023-12-31',
             'location': 'Hyde Park',
             'description': 'Desk Lamp used for 5 months.',
+            'buy_now_enabled': True,
+        },
+        {
+            'id': 2,
+            'product_title': 'Study Table',
+            'image': 'table.jpg',
+            'min_bid': 70.0,
+            'expiration_date': '2023-12-30',
+            'location': 'Hyde Park',
+            'description': 'Study Table used for 1 month.',
+            'buy_now_enabled': False,
         },
         # Add more listings as needed
     ]
 }
+
 
 @main.route('/')
 def index():
@@ -56,7 +83,7 @@ def add_listing():
 
 @main.route('/shopping_cart')
 def shopping_cart():
-    return render_template('shopping_cart.html')
+    return render_template('shopping_cart.html', user=sample_user)
 
 @main.route('/profile')
 def profile():
@@ -122,10 +149,35 @@ def place_bid(listing_id):
     # Pass bid-related messages to the template
     return render_template('product_details.html', listing=listing, bid_message=bid_message, bid_status=bid_status)
 
-
-
 @main.route('/delete_listing/<int:listing_id>', methods=['POST'])
 def delete_listing(listing_id):
     # Handle listing deletion logic here
     pass
+
+@main.route('/checkout/<int:order_id>')
+def checkout(order_id):
+    # Fetch order details based on order_id
+    order = next((order for order in sample_user['orders'] if order['id'] == order_id), None)
+    if order:
+        return render_template('checkout.html', order=order)
+    else:
+        # Handle order not found
+        return redirect(url_for('main.shopping_cart'))
+
+@main.route('/process_checkout/<int:order_id>', methods=['POST'])
+def process_checkout(order_id):
+    # Fetch order details based on order_id
+    order = next((order for order in sample_user['orders'] if order['id'] == order_id), None)
+
+    if order:
+        # Process the checkout and handle the submitted form data
+        full_name = request.form.get('full_name')
+        address = request.form.get('address')
+
+        # Perform the necessary actions (e.g., payment processing) and update the order status
+
+        return render_template('checkout_success.html', order=order, full_name=full_name, address=address)
+    else:
+        # Handle order not found
+        return redirect(url_for('main.shopping_cart'))
 
