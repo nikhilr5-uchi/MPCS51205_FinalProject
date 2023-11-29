@@ -2,6 +2,7 @@ import pika
 import sys
 from pika.exchange_type import ExchangeType
 import json
+from datetime import datetime
 
 class Item:
     def __init__(self, user, title, expiration, starting_bid, location, description, uid):
@@ -12,6 +13,7 @@ class Item:
         self.location = location
         self.descriptions = description
         self.uid = uid
+        self.DaysTilExpiration = str((datetime.strptime(expiration, '%Y-%m-%d') - datetime.today()).days)
 
     # if price is high enough to add
     def IsOfferAllowed(self, priceOffer):
@@ -42,7 +44,7 @@ class Item:
         return json.dumps(self, default=lambda o: o.__dict__, 
             sort_keys=True, indent=4)
 
-if __name__ == '__main__':
-    des = ['blue', 'small']
-    item = Item('Nikhil', 'Chair', '12-12-2023', '100', 'Anywhere', des)   
-    item.PublishItem()
+# if __name__ == '__main__':
+#     des = ['blue', 'small']
+#     item = Item('Nikhil', 'Chair', '12-12-2023', '100', 'Anywhere', des)   
+#     item.PublishItem()
