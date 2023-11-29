@@ -4,6 +4,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_restful import Api, Resource
 from item import Item
+from search import Search
 import pika
 import asyncio
 import threading
@@ -50,13 +51,17 @@ def start_consumer_queue(): #consume tasks
 def index():
     if request.method == 'POST':
         new_ordering = []
-        sortType = request.form['sort']
-        old_ordering = list(auction_items.values())
-        print("old_ordering: ", old_ordering)
-        if sortType == 'priceLowHigh':
-            new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=False)
-        if sortType == 'priceHighLow':
-            new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=True)
+        if 'filter' in request.form:
+            sortType = request.form['sort']
+            old_ordering = list(auction_items.values())
+            print("old_ordering: ", old_ordering)
+            if sortType == 'priceLowHigh':
+                new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=False)
+            if sortType == 'priceHighLow':
+                new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=True)
+        else:
+            searchFilter = request.form['searchItem']
+            search = Search(searchFilter, list(auction_items.values()))
         return render_template('index.html', auction_items=new_ordering)
 
     return render_template('index.html', auction_items=auction_items.values())
