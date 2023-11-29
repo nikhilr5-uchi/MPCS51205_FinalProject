@@ -1,0 +1,89 @@
+{% extends "home.html" %}
+
+{% block content %}
+<div class="column is-6 is-offset-3">
+    <h3 class="title">Add Listing</h3>
+    <div class="box">
+        <form method="POST" action="{{ url_for('main.add_listing') }}" enctype="multipart/form-data">
+            <div class="field">
+                <label class="label">Title</label>
+                <div class="control">
+                    <input class="input" type="text" name="title" placeholder="Title" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Product Tags</label>
+                <div class="control">
+                    <input class="input" type="text" name="tags" placeholder="Product Tags">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Picture of Product</label>
+                <div class="control">
+                    <input class="input" type="file" name="product_image" accept="image/*" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Bid Starting Price</label>
+                <div class="control">
+                    <input class="input" type="number" name="starting_price" placeholder="Bid Starting Price" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="checkbox">
+                    <input type="checkbox" name="buy_now" id="buy_now_checkbox">
+                    Buy Now
+                </label>
+            </div>
+
+            <div class="field" id="buy_now_price_field" style="display: none;">
+                <label class="label">Buy Now Price</label>
+                <div class="control">
+                    <input class="input" type="number" name="buy_now_price" placeholder="Buy Now Price">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Expiration Date</label>
+                <div class="control">
+                    <input class="input" type="date" name="expiration_date" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Location</label>
+                <div class="control">
+                    <input class="input" type="text" name="location" placeholder="Location">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Description</label>
+                <div class="control">
+                    <textarea class="textarea" name="description" placeholder="Description" required></textarea>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button class="button is-primary" type="submit">Add Listing</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Show/hide Buy Now Price field based on the Buy Now checkbox
+    const buyNowCheckbox = document.getElementById('buy_now_checkbox');
+    const buyNowPriceField = document.getElementById('buy_now_price_field');
+
+    buyNowCheckbox.addEventListener('change', function () {
+        buyNowPriceField.style.display = buyNowCheckbox.checked ? 'block' : 'none';
+    });
+</script>
+{% endblock %}
