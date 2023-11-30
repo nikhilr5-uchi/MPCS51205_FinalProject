@@ -18,3 +18,13 @@ switched to db users
 ...   roles: ["readWrite"]
 ... })
 
+mysql setup instructions:
+mysql -u root -p
+enter password for root (may be local machine's password)
+execute commands in mysql terminal:
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+mysql> FLUSH PRIVILEGES;
+mysql> CREATE DATABASE IF NOT EXISTS auction_site;
+mysql> CREATE TABLE IF NOT EXISTS bid (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        bid_amount INT
