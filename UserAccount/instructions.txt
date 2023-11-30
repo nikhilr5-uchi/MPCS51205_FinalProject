@@ -7,3 +7,14 @@
 Resources leveraged:
 https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
 https://www.youtube.com/watch?v=mISFEwojJmE&t=0s&ab_channel=LukePeters
+
+mongodb setup instructions:
+
+> use users
+switched to db users
+> db.createUser({
+...   user: "appUser",
+...   pwd: "appPassword",
+...   roles: ["readWrite"]
+... })
+
