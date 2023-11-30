@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 class Item:
-    def __init__(self, user, title, expiration, starting_bid, location, description, uid):
+    def __init__(self, user, title, expiration, starting_bid, location, description, uid, filenameImg):
         self.user = user
         self.title = title
         self.expiration = expiration
@@ -14,6 +14,7 @@ class Item:
         self.descriptions = description
         self.uid = uid
         self.DaysTilExpiration = str((datetime.strptime(expiration, '%Y-%m-%d') - datetime.today()).days)
+        self.filenameImg = filenameImg
 
     # if price is high enough to add
     def IsOfferAllowed(self, priceOffer):

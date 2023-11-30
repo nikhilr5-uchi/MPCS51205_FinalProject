@@ -1,8 +1,19 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 # from . import db
 import pymongo
-
+from item import Item
+#from search import Search
 from pymongo import MongoClient
+import pika
+import asyncio
+import threading
+import sys
+import os
+import json
+from os.path import join, dirname, realpath
+from werkzeug.utils import secure_filename
+
+UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/images')
 
 client = MongoClient("mongodb://localhost:27017/")
 db = client['bid_db']
@@ -11,6 +22,31 @@ bid_collection = db['bids']
 
 main = Blueprint('main', __name__) 
 
+uid_counter = 3
+auction_items= {
+
+    1: {
+            'id': 1,
+            'product_title': 'Desk Lamp',
+            'image': 'lamp.jpg',
+            'min_bid': 5.0,
+            'expiration_date': '2023-12-31',
+            'location': 'Hyde Park',
+            'description': 'Desk Lamp used for 5 months.',
+            'buy_now_enabled': True,
+            'buy_now_price': 15.0,
+        },
+    2: {
+            'id': 2,
+            'product_title': 'Study Table',
+            'image': 'table.jpg',
+            'min_bid': 70.0,
+            'expiration_date': '2023-12-30',
+            'location': 'Hyde Park',
+            'description': 'Study Table used for 1 month.',
+            'buy_now_enabled': False,
+        },
+}
 # Sample user data
 sample_user = {
     'email': 'sample@example.com',
@@ -76,12 +112,46 @@ def search():
     # Add logic for handling the search here
     return render_template('search_results.html')
 
-@main.route('/all_listings')
+@main.route('/all_listings', methods=['GET', 'POST'])
 def all_listings():
-    return render_template('all_listings.html', user=sample_user)
+    if request.method == 'POST':
+        new_ordering = []
+        if 'filter' in request.form:
+            sortType = request.form['sort']
+            old_ordering = list(auction_items.values())
+            print("old_ordering: ", old_ordering)
+            if sortType == 'priceLowHigh':
+                new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=False)
+            if sortType == 'priceHighLow':
+                new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=True)
+        else:
+            searchFilter = request.form['searchItem']
+            search = Search(searchFilter, list(auction_items.values()))
 
-@main.route('/add_listing')
-def add_listing():
+    return render_template('all_listings.html', listings=auction_items.values())
+
+@main.route('/add_listing', methods=['GET', 'POST'])
+def add_listing():                                                             
+    if request.method == 'POST':
+        title = request.form['title']
+        location = request.form['location']
+        expirationDate = request.form['expiration_date']
+        description = request.form['description']
+        startingBid = request.form['starting_price']
+        filenameImg=''
+        if request.files['product_image'].filename != '':
+                image = request.files['product_image']
+                filenameImg = image.filename
+                image.save(os.path.join(UPLOADS_PATH, secure_filename(image.filename)))
+
+        global uid_counter
+        new_item = Item(user="placeholder", title=title, expiration=expirationDate, starting_bid=startingBid, 
+            location=location, description=description, uid=uid_counter, filenameImg=filenameImg)   
+        new_item.PublishItem()
+        AddListing(new_item)
+        uid_counter+=1
+        return redirect(url_for('main.all_listings')) #redirect to show all listings
+
     return render_template('add_listing.html')
 
 @main.route('/shopping_cart')
@@ -243,3 +313,16 @@ def process_checkout(listing_id):
     else:
         # Handle listing not found
         return redirect(url_for('main.shopping_cart'))
+
+def AddListing(item):
+    auction_items[item.uid] = {
+        'id': item.uid,
+        'product_title': item.title,
+        'image': item.filenameImg,
+        'expiration_date': item.expiration,
+        'description': item.descriptions,
+        'buy_now_enabled': True,
+        'location': item.location,
+        'buy_now_price': item.starting_bid,
+        'min_bid': item.starting_bid,
+    }
