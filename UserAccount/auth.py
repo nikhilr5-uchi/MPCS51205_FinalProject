@@ -44,7 +44,6 @@ def signup_post():
 
     user = User.objects(email=email).first()
 
-    # Process login logic here
     if user: 
         flash('Email address already exists. Go to login page')
         return redirect(url_for('auth.signup'))
