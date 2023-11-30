@@ -12,13 +12,44 @@ import os
 import json
 from os.path import join, dirname, realpath
 from werkzeug.utils import secure_filename
+import mysql.connector
 
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/images')
 
-client = MongoClient("mongodb://localhost:27017/")
-db = client['bid_db']
+#Uncomment and run the block of code below if need to create the database and table
+#(this is only intended to be run once)
+#Alternatively just run the sql commands in a sql IDE like data grip for the same results
+'''mydb = mysql.connector.connect(
+host="localhost", #change as needed
+user="root", #change as needed
+password="root", #change as needed
+)
 
-bid_collection = db['bids']
+mycursor = mydb.cursor()
+
+# Create the database 'auction_site'
+mycursor.execute("CREATE DATABASE IF NOT EXISTS auction_site")
+
+# Switch to the 'auction_site' database
+mycursor.execute("USE auction_site")
+
+# Create the 'bid' table
+mycursor.execute("""
+    CREATE TABLE IF NOT EXISTS bid (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        bid_amount INT
+    )
+""")'''
+
+
+mydb = mysql.connector.connect(
+host="localhost",
+user="root",
+password="root",
+database="auction_site"
+)
+
+mycursor = mydb.cursor()
 
 main = Blueprint('main', __name__) 
 
@@ -226,59 +257,73 @@ def place_bid(listing_id):
 #THIS IS THE NEW place_bid function where bids also get stored in databases
 @main.route('/place_bid/<int:listing_id>', methods=['POST'])
 def place_bid(listing_id):
-    # Fetch the listing from the user's data
-    listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
+    
+    try:
+        # Fetch the listing from the user's data
+        listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
 
-    if listing:
-        # Get the current bid amount from the form
-        bid_amount = float(request.form.get('bid_amount', 0.0))
+        if listing:
+            # Get the current bid amount from the form
+            bid_amount = float(request.form.get('bid_amount', 0.0))
 
-        # Ensure the bid amount is greater than the current bid
-        if bid_amount > listing['min_bid']:
-            # Update the minimum bid for the listing
-            listing['min_bid'] = bid_amount
-            bid_collection.insert_one({"bid_amount" : bid_amount})
-            bid_message = 'Bid placed successfully!'
-            bid_status = 'success'
+            # Ensure the bid amount is greater than the current bid
+            if bid_amount > listing['min_bid']:
+                # Update the minimum bid for the listing
+                listing['min_bid'] = bid_amount
+                sql = "INSERT INTO bid (bid_amount) VALUES (%s)"
+                values = (bid_amount,)
+                mycursor.execute(sql, values)
+                mydb.commit()
+                bid_message = 'Bid placed successfully!'
+                bid_status = 'success'
+            else:
+                bid_message = 'Bid must be greater than the current minimum bid.'
+                bid_status = 'danger'
         else:
-            bid_message = 'Bid must be greater than the current minimum bid.'
+            bid_message = 'Listing not found.'
             bid_status = 'danger'
-    else:
-        bid_message = 'Listing not found.'
-        bid_status = 'danger'
 
-    # Pass bid-related messages to the template
-    return render_template('product_details.html', listing=listing, bid_message=bid_message, bid_status=bid_status)
+        # Pass bid-related messages to the template
+        return render_template('product_details.html', listing=listing, bid_message=bid_message, bid_status=bid_status)
+    except Exception as e:
+        print("An error occurred:", e)
 
 #Get all the bids in the database and return as a list
 @main.route('/get_bids/<int:listing_id>', methods=['GET'])
 def get_bids():
-    bids = bid_collection.find()
-    bid_list = [{'id': str(bid['_id']), 'bid_amount': bid['bid_amount']} for bid in bids]
-    return bid_list
+    
+    try:
+        mycursor.execute("SELECT * FROM bid")
+        result = mycursor.fetchall()
+        bids = []
+        for row in result:
+            bid = {
+                'id': row[0],
+                'bid_amount': row[1]
+            }
+            bids.append(bid)
+        return bids
+    except Exception as e:
+        print("An error occurred:", e)
 
 #Use largest bid in database and inrement_amount to get next bid increment
 @main.route('/increment_bid/<int:listing_id>', methods=['PUT'])
 def increment_bid(increment_amount):
 
-    # Update the bid amount for the next bid by incrementing it
-    pipeline = [
-    {"$group": {"_id": None, "maxBidAmount": {"$max": "$bid_amount"}}},
-    {"$project": {"_id": 0, "maxBidAmount": 1}}
-    ]
+    try:
+        # Update the bid amount for the next bid by incrementing it
+        mycursor.execute("SELECT MAX(bid_amount) FROM bid")
+        current_max_bid = mycursor.fetchone()[0]
 
-    current_bids = list(bid_collection.aggregate(pipeline))
+        if current_max_bid is None:
+            return increment_amount
 
-    # Check if there is a result and retrieve the maximum bid amount
-    if current_bids:
-        max_bid_amount = current_bids[0]['maxBidAmount']
-        print("Next Bid Amount:", (max_bid_amount + increment_amount))
-    else:
-        print("No data found in the collection.")
+        new_bid_amount = current_max_bid + increment_amount
 
-    new_bid_amount = max_bid_amount + increment_amount
-
-    return new_bid_amount
+        return new_bid_amount
+    
+    except Exception as e:
+        print("An error occurred:", e)
 
 @main.route('/delete_listing/<int:listing_id>', methods=['POST'])
 def delete_listing(listing_id):
