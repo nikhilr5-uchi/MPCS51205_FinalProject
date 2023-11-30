@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, redirect, url_for, request
-# from . import db
+from . import db
+from flask_login import login_required, current_user
 import pymongo
 from item import Item
-#from search import Search
+from search import Search
 from pymongo import MongoClient
 import pika
 import asyncio
@@ -52,6 +53,16 @@ database="auction_site"
 mycursor = mydb.cursor()
 
 main = Blueprint('main', __name__) 
+
+@main.route('/')
+def index():
+    return render_template('index.html')
+
+@main.route('/profile')
+@login_required
+def profile():
+    new_address = request.args.get('new_address')
+    return render_template('profile.html', name=current_user.name, email=current_user.email, user=sample_user, new_address=new_address)
 
 uid_counter = 3
 auction_items= {
@@ -130,20 +141,18 @@ sample_user = {
 }
 
 
-@main.route('/')
-def index():
-    return render_template('index.html')
-
 @main.route('/home')
 def home():
     return render_template('home.html')
 
 @main.route('/search')
+@login_required
 def search():
     # Add logic for handling the search here
     return render_template('search_results.html')
 
 @main.route('/all_listings', methods=['GET', 'POST'])
+@login_required
 def all_listings():
     if request.method == 'POST':
         new_ordering = []
@@ -162,6 +171,7 @@ def all_listings():
     return render_template('all_listings.html', listings=auction_items.values())
 
 @main.route('/add_listing', methods=['GET', 'POST'])
+@login_required
 def add_listing():                                                             
     if request.method == 'POST':
         title = request.form['title']
@@ -186,13 +196,9 @@ def add_listing():
     return render_template('add_listing.html')
 
 @main.route('/shopping_cart')
+@login_required
 def shopping_cart():
     return render_template('shopping_cart.html', user=sample_user)
-
-@main.route('/profile')
-def profile():
-    new_address = request.args.get('new_address')
-    return render_template('profile.html', user=sample_user, new_address=new_address)
 
 @main.route('/edit_address')
 def edit_address():
