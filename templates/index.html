@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlaskBlog</title>
+</head>
+<body>
+   <h1>Auction Website</h1>
+   <form method="post">
+        <label for="sort">Search:</label>
+        <input type="text" name="title"
+        placeholder="Title"
+        value="{{ request.form['searchItem'] }}"></input>
+            <button type="submit">Search</button>
+    </form>
+    <br>
+   <p align="center"><a href=removeListing >
+        <button class=grey style="height:75px;width:150px">Remove Listing</button>
+     </a></p>
+   <p align="center"><a href=addListing >
+       <button class=grey style="height:75px;width:150px">Add Listing</button>
+    </a></p>
+    <form method="post">
+            <label for="sort">Sort:</label>
+                <select id="sort" name="sort">
+                        <option value="priceLowHigh">Price: Low to High</option>
+                        <option value="priceHighLow">Price: High to Low</option>
+                </select>
+                <button id = 'filter' type="submit" name="filter" value="filtered">Reload</button>
+        </form>
+   {% for auction_item in auction_items %}
+   <p>{{ auction_item }} </p>
+{% endfor %}
+</body>
+</html>

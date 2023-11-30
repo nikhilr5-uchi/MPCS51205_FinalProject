@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <h1>{% block title %} Remove Listing {% endblock %}</h1>
+  <form method="post">
+
+      <label for="removeUID">Remove UID:</label>
+      <select id="removeUID" name="removeUID">
+            {% for auction_uid in auction_uids %}
+                <option value="{{ auction_uid }}">{{ auction_uid }}</option>
+            {% endfor %}
+      </select>
+      <button type="submit">Submit</button>
+  </form>
+</body>
+</html> 
