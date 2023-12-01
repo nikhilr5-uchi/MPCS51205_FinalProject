@@ -66,35 +66,18 @@ def profile():
     sqlQuery = "SELECT * FROM listing"
     print(sqlQuery)
     mycursor.execute(sqlQuery)
-    listings = ConvertToDict(mycursor.fetchall())
-    print(listings)
+    all_listings = ConvertToDict(mycursor.fetchall())
+    listings = []
+    print(all_listings)
+    print('user, ', str(createUID(current_user.email)))
+    for listing in all_listings:
+        print(listing['userID'])
+        if listing['userID'] == createUID(current_user.email):
+            listings.append(listing)
     return render_template('profile.html', name=current_user.name, email=current_user.email, user=sample_user, new_address=new_address, listings=listings)
 
 uid_counter = 3
-auction_items= {
 
-    1: {
-            'id': 1,
-            'product_title': 'Desk Lamp',
-            'image': 'lamp.jpg',
-            'min_bid': 5.0,
-            'expiration_date': '2023-12-31',
-            'location': 'Hyde Park',
-            'description': 'Desk Lamp used for 5 months.',
-            'buy_now_enabled': True,
-            'buy_now_price': 15.0,
-        },
-    2: {
-            'id': 2,
-            'product_title': 'Study Table',
-            'image': 'table.jpg',
-            'min_bid': 70.0,
-            'expiration_date': '2023-12-30',
-            'location': 'Hyde Park',
-            'description': 'Study Table used for 1 month.',
-            'buy_now_enabled': False,
-        },
-}
 # Sample user data
 sample_user = {
     'email': 'sample@example.com',
@@ -164,7 +147,6 @@ def all_listings():
         new_ordering = []
         if 'filter' in request.form:
             sortType = request.form['sort']
-            old_ordering = list(auction_items.values())
             print("old_ordering: ", old_ordering)
             if sortType == 'priceLowHigh':
                 new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=False)
@@ -172,10 +154,9 @@ def all_listings():
                 new_ordering = sorted(old_ordering, key=lambda x: int(x['starting_bid']), reverse=True)
         else:
             searchFilter = request.form['searchItem']
-            search = Search(searchFilter, list(auction_items.values()))
     mycursor.execute("SELECT * FROM listing")
     listings = ConvertToDict(mycursor.fetchall())
-
+    mydb.commit()
     return render_template('all_listings.html', listings=listings)
 
 @main.route('/add_listing', methods=['GET', 'POST'])
@@ -373,25 +354,14 @@ def process_checkout(listing_id):
         # Handle listing not found
         return redirect(url_for('main.shopping_cart'))
 
-def AddListing(item):
-    auction_items[item.uid] = {
-        'id': item.uid,
-        'product_title': item.title,
-        'image': item.filenameImg,
-        'expiration_date': item.expiration,
-        'description': item.descriptions,
-        'buy_now_enabled': True,
-        'location': item.location,
-        'buy_now_price': item.starting_bid,
-        'min_bid': item.starting_bid,
-    }
 
 def ConvertToDict(listings):
     all_items=[]
+    print("listings", listings)
     for listing in listings:
         current = {
             'id': listing[0],
-            'uid': listing[1],
+            'userID': listing[1],
             'product_title': listing[2],
             'image': listing[3],
             'min_bid': listing[4],
@@ -405,4 +375,5 @@ def ConvertToDict(listings):
     return all_items
 
 def createUID(email):
-    return int(str(hash(email))[1:13]) % 100
+    res= int.from_bytes(email.encode(), 'little')
+    return int(str(res)[:4])

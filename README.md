@@ -7,6 +7,69 @@ informed: {Summer Long, James Long, Jaswitha Reddy, Christian Urbanek, Torres
 Shi, Nikhil Richard, Alan Salkanovic, John Hadidian-Baugher, Mark Shacklette}
 ---
 
+# How to start Up Site In Order
+
+## 1. Start MongoDB
+
+#### Start Server 
+`mongosh`
+
+#### Create Users 
+
+> use users
+switched to db users
+> db.createUser({
+...   user: "appUser",
+...   pwd: "appPassword",
+...   roles: ["readWrite"]
+... })
+
+## 2. Start MySql
+
+#### Start server
+mysql -u root -p
+enter password for root (may be local machine's password)
+execute commands in mysql terminal:
+
+#### Change Perms
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+mysql> FLUSH PRIVILEGES;
+
+#### Create Database and Tables
+
+mysql> CREATE DATABASE IF NOT EXISTS auction_site;
+
+mysql> CREATE TABLE IF NOT EXISTS bid (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        bid_amount INT
+      );
+
+mysql> CREATE TABLE IF NOT EXISTS listing (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userID INT,
+        product_title varchar(64),
+        imageName     varchar(64),
+        min_bid         float,
+        expiration_date datetime,
+        location        varchar(64),
+        description     varchar(255),
+        buy_now_enabled bit,
+        buy_now_price   float
+      );
+
+## 3. Start RabbitMQ Server
+
+If container is not running then ` docker run -d --hostname my-wabbit --name MyWabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management `
+
+Now ` python rpcConsumer.py `
+This is to have the server start consuming data to communicated when items are being added
+
+## 4. Add Test Data
+
+Create a script to add test data under different user
+` python inserttestdata.py `
+
+
 # ADR: Auction Site Implementation
 
 ## Context
