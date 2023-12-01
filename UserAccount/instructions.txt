@@ -1,13 +1,19 @@
+*********** FLASK APP SETUP **************
+
+
 1.) cd into root of this repo
 2.) run 
       export FLASK_APP=UserAccount
       flask run
+*********** RCP SETUP **************
 
+Why is this needed?
+Handles communication when adding an item which adds to db and pulls items from db
 
-Resources leveraged:
-https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
-https://www.youtube.com/watch?v=mISFEwojJmE&t=0s&ab_channel=LukePeters
+1)  docker run -d --hostname my-wabbit --name MyWabbit -p 15672:15672 -p 5672:5672 rabbitmq:3-management 
+2) python rpcConsumer.py
 
+*********** MONGODB SETUP **************
 mongodb setup instructions:
 
 > use users
@@ -17,6 +23,9 @@ switched to db users
 ...   pwd: "appPassword",
 ...   roles: ["readWrite"]
 ... })
+
+
+*********** MYSQL SETUP **************
 
 mysql setup instructions:
 mysql -u root -p
@@ -28,3 +37,22 @@ mysql> CREATE DATABASE IF NOT EXISTS auction_site;
 mysql> CREATE TABLE IF NOT EXISTS bid (
         id INT AUTO_INCREMENT PRIMARY KEY,
         bid_amount INT
+      );
+mysql> CREATE TABLE IF NOT EXISTS listing (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        userID INT,
+        product_title varchar(64),
+        imageName     varchar(64),
+        min_bid         float,
+        expiration_date datetime,
+        location        varchar(64),
+        description     varchar(255),
+        buy_now_enabled bit,
+        buy_now_price   float
+      );
+
+
+*********** RESOURCES **************
+Resources leveraged:
+https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
+https://www.youtube.com/watch?v=mISFEwojJmE&t=0s&ab_channel=LukePeters

@@ -14,6 +14,7 @@ import json
 from os.path import join, dirname, realpath
 from werkzeug.utils import secure_filename
 import mysql.connector
+import hashlib
 
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'static/images')
 
@@ -62,7 +63,12 @@ def index():
 @login_required
 def profile():
     new_address = request.args.get('new_address')
-    return render_template('profile.html', name=current_user.name, email=current_user.email, user=sample_user, new_address=new_address)
+    sqlQuery = "SELECT * FROM listing"
+    print(sqlQuery)
+    mycursor.execute(sqlQuery)
+    listings = ConvertToDict(mycursor.fetchall())
+    print(listings)
+    return render_template('profile.html', name=current_user.name, email=current_user.email, user=sample_user, new_address=new_address, listings=listings)
 
 uid_counter = 3
 auction_items= {
@@ -167,8 +173,10 @@ def all_listings():
         else:
             searchFilter = request.form['searchItem']
             search = Search(searchFilter, list(auction_items.values()))
+    mycursor.execute("SELECT * FROM listing")
+    listings = ConvertToDict(mycursor.fetchall())
 
-    return render_template('all_listings.html', listings=auction_items.values())
+    return render_template('all_listings.html', listings=listings)
 
 @main.route('/add_listing', methods=['GET', 'POST'])
 @login_required
@@ -186,7 +194,7 @@ def add_listing():
                 image.save(os.path.join(UPLOADS_PATH, secure_filename(image.filename)))
 
         global uid_counter
-        new_item = Item(user="placeholder", title=title, expiration=expirationDate, starting_bid=startingBid, 
+        new_item = Item(user=createUID(current_user.email), title=title, expiration=expirationDate, starting_bid=startingBid, 
             location=location, description=description, uid=uid_counter, filenameImg=filenameImg)   
         new_item.PublishItem()
         AddListing(new_item)
@@ -377,3 +385,24 @@ def AddListing(item):
         'buy_now_price': item.starting_bid,
         'min_bid': item.starting_bid,
     }
+
+def ConvertToDict(listings):
+    all_items=[]
+    for listing in listings:
+        current = {
+            'id': listing[0],
+            'uid': listing[1],
+            'product_title': listing[2],
+            'image': listing[3],
+            'min_bid': listing[4],
+            'expiration_date': listing[5],
+            'location': listing[6],
+            'description': listing[7],
+            'buy_now_enabled': listing[8],
+            'buy_now_price' : listing[9]
+        }
+        all_items.append(current)
+    return all_items
+
+def createUID(email):
+    return int(str(hash(email))[1:13]) % 100

@@ -44,8 +44,3 @@ class Item:
     def toJSON(self):
         return json.dumps(self, default=lambda o: o.__dict__, 
             sort_keys=True, indent=4)
-
-# if __name__ == '__main__':
-#     des = ['blue', 'small']
-#     item = Item('Nikhil', 'Chair', '12-12-2023', '100', 'Anywhere', des)   
-#     item.PublishItem()
