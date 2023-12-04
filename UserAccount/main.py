@@ -312,6 +312,9 @@ def place_bid(listing_id):
         return render_template('product_details.html', listing=listing, bid_message=bid_message, bid_status=bid_status)
     except Exception as e:
         print("An error occurred:", e)
+        # Handle the error and return an error message or redirect to an error page
+        error_message = 'An error occurred while placing the bid.'
+        return render_template('error.html', error_message=error_message, error=e)
 
 #Get all the bids in the database and return as a list
 @main.route('/get_bids/<int:listing_id>', methods=['GET'])
