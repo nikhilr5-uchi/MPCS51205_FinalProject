@@ -248,13 +248,44 @@ def place_bid(listing_id):
     # Pass bid-related messages to the template
     return render_template('product_details.html', listing=listing, bid_message=bid_message, bid_status=bid_status)'''
 
+@main.route('/get_listings/<int:listing_id>', methods=['GET'])
+def get_listings():
+    
+    try:
+        mycursor.execute("SELECT * FROM listing")
+        result = mycursor.fetchall()
+        listings = []
+        for row in result:
+            listing = {
+                'id': row[0],
+                'userID': row[1],
+                'product_title': row[2],
+                'imageName': row[3],
+                'min_bid': row[4],
+                'expiration_date': row[5],
+                'location': row[6],
+                'description': row[7],
+                'buy_now_enabled': row[8],
+                'buy_now_price': row[9]
+            }
+            listings.append(listing)
+        return listings
+    except Exception as e:
+        print("An error occurred:", e)
+
 #THIS IS THE NEW place_bid function where bids also get stored in databases
 @main.route('/place_bid/<int:listing_id>', methods=['POST'])
 def place_bid(listing_id):
     
     try:
         # Fetch the listing from the user's data
-        listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
+        listings = get_listings()
+        listing = None
+        for curr_listing in listings:
+            if curr_listing['id'] == listing_id:
+                listing = curr_listing
+                break
+        #listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
 
         if listing:
             # Get the current bid amount from the form
