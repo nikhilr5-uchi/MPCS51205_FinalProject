@@ -56,7 +56,7 @@ def add_to_auction(body):
     )
     userId = int(data['user'])
     min_bid = float(data['starting_bid'])
-    sqlValues = (userId, data['title'], data['filenameImg'], min_bid, datetime.date(2012, 3, 23) ,data['location'], data['descriptions'], True, 15)
+    sqlValues = (userId, data['title'], data['filenameImg'], min_bid, data['expiration'] ,data['location'], data['descriptions'], True, 15)
     mycursor.execute(insert_stmt, sqlValues)
     mydb.commit()
 
