@@ -279,13 +279,13 @@ def place_bid(listing_id):
     
     try:
         # Fetch the listing from the user's data
-        listings = get_listings()
-        listing = None
-        for curr_listing in listings:
-            if curr_listing['id'] == listing_id:
-                listing = curr_listing
-                break
-        #listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
+        listing = next((listing for listing in sample_user['listings'] if listing['id'] == listing_id), None)
+        #listings = get_listings()
+        #listing = None
+        #for curr_listing in listings:
+        #    if curr_listing['id'] == listing_id:
+        #        listing = curr_listing
+        #        break
 
         if listing:
             # Get the current bid amount from the form
