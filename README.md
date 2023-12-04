@@ -69,6 +69,12 @@ This is to have the server start consuming data to communicated when items are b
 Create a script to add test data under different user
 ` python inserttestdata.py `
 
+## 5. Start Flask app
+run
+`export FLASK_APP=UserAccount`
+then
+ `flask run`
+
 
 # ADR: Auction Site Implementation
 
