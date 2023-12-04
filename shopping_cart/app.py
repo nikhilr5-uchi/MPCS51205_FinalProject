@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import declarative_base, Session, relationship, sessionmaker, joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
-DATABASE_URL = "sqlite:///./cart.db"
+DATABASE_URL = "mysql+mysqlconnector://root:root@localhost/auction_site"
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 
@@ -21,7 +21,7 @@ class Cart(Base):
 class Product(Base):
     __tablename__ = "products"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    name = Column(String, index=True)
+    name = Column(String(255), index=True)
     price = Column(Float, nullable=False)
 
     # Establish a relationship with the CartItem model
