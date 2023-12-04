@@ -178,7 +178,6 @@ def add_listing():
         new_item = Item(user=createUID(current_user.email), title=title, expiration=expirationDate, starting_bid=startingBid, 
             location=location, description=description, uid=uid_counter, filenameImg=filenameImg)   
         new_item.PublishItem()
-        AddListing(new_item)
         uid_counter+=1
         return redirect(url_for('main.all_listings')) #redirect to show all listings
 
