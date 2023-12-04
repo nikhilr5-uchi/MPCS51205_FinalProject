@@ -260,7 +260,7 @@ def get_listings():
                 'id': row[0],
                 'userID': row[1],
                 'product_title': row[2],
-                'imageName': row[3],
+                'image': row[3],
                 'min_bid': row[4],
                 'expiration_date': row[5],
                 'location': row[6],
