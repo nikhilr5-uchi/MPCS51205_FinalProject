@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import declarative_base, Session, relationship, sessionmaker, joinedload
 from sqlalchemy.orm.exc import NoResultFound
 
-DATABASE_URL = "mysql+mysqlconnector://root:root@localhost/shopping_cart"
+DATABASE_URL = "mysql+mysqlconnector://root:root@localhost/auction_site"
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
 
